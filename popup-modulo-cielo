@@ -1,0 +1,35 @@
+protected function _construct()
+    {
+        parent::_construct();
+        $this->setTemplate('Oitoo_Cielo/form.phtml');
+
+       //zera a taxa de juros, caso o cliente tenha voltado ao carrinho
+        $quote = Mage::getSingleton('checkout/cart')->getQuote();
+        $quote->setJuros(0.0);
+        $quote->setBaseJuros(0.0);
+        $quote->setTotalsCollectedFlag(false)->collectTotals();
+        $quote->save();
+
+     
+
+        //limpa os meios de pagamento salvos
+        try{
+        $instance = $quote->getPayment()->getMethodInstance();
+        $instance['info_instance']->setAdditionalData(10);
+        //$instance['info_instance']->setMethod('apelidocielo');
+        $data['method'] = 'apelidocielo';
+        $quote->getShippingAddress()->setPaymentMethod($data);
+        $quote->getShippingAddress()->setCollectShippingRates(true);
+        $quote->getShippingAddress()->collectShippingRates();
+
+        $payment = $quote->getPayment();
+        $payment->importData($data);
+        } catch(exception $e){
+
+        }
+
+
+        $quote->setTotalsCollectedFlag(false)->collectTotals();
+        $quote->save();
+       
+    }
