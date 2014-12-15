@@ -13,7 +13,3 @@
         } catch(exception $e){
 
         }
-
-
-        $quote->setTotalsCollectedFlag(false)->collectTotals();
-        $quote->save();
